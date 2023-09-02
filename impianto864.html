@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>XML Data Extraction and Display</title>
     <style>
         body {
@@ -10,21 +11,20 @@
             background-image: url("https://i.postimg.cc/pTZzSjwK/AQWXzg.gif");
             background-size: cover;
             background-repeat: no-repeat;
-            background-position: center top; /* Adjusted background position */
+            background-position: center top;
             background-attachment: fixed;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            overflow: hidden; /* Disable scroll bars */
+            overflow: hidden;
         }
 
         .overlay {
-            background-color: rgba(52, 58, 64, 0); /* Transparent background */
+            background-color: rgba(52, 58, 64, 0);
             padding-top: 20px;
             padding-bottom: 20px;
-            max-width: 600px;
-            margin: 20px auto;
+            max-width: 90%;
             text-align: center;
         }
 
@@ -43,14 +43,14 @@
             padding: 0;
             line-height: 1.5;
             font-size: 2rem;
-            text-align: center; /* Center-align the text */
+            text-align: center;
         }
 
         .subheading {
             margin-top: 0.2em;
             text-indent: 2em;
             font-size: 1.5rem;
-            text-align: center; /* Center-align the text */
+            text-align: center;
         }
 
         .smaller-text {
@@ -60,32 +60,33 @@
         hr {
             max-width: 500px;
             margin: 0 auto 10px;
-            width: 500%; /* Make the HR line 5 times longer */
+            width: 500%;
         }
 
-        /* Added style for the data box */
         .data-box {
-         background-color: rgba(52, 58, 64, 0.2); /* Semi-transparent background color */
-         border: none; /* Remove border */
-         padding: 0; /* Remove padding */
-         box-shadow: none; /* Remove box shadow */
-         overflow: hidden; /* Hide any overflowing content */
-         text-align: center; /* Center-align content in the data box */
-         }
+            background-color: rgba(52, 58, 64, 0.1);
+            border: none;
+            padding: 0;
+            box-shadow: none;
+            overflow: hidden;
+            text-align: center;
+            margin: 10px; /* Added margin for spacing on mobile */
+        }
 
-        /* Added style for logos */
         .logo-left {
             position: absolute;
             top: 20px;
             left: 20px;
+            width: 150px; /* Adjusted width for the left logo */
+            height: auto;
         }
 
         .logo-right {
             position: absolute;
-            top: 10px;
+            top: 20px;
             right: 20px;
-            width: 200px; /* Set the width of the second logo to be three times bigger */
-            height: auto; /* Maintain aspect ratio */
+            width: 200px; /* Adjusted width for the right logo */
+            height: auto;
         }
     </style>
 </head>
@@ -93,13 +94,13 @@
     <img class="logo-left" src="https://www.iveco.com/italy/-/media/ScIVG/shared/Logo/Iveco---Drive-the-road-of-change.svg?iar=0&rev=-1" alt="Iveco Logo">
     <img class="logo-right" src="https://i.postimg.cc/yd33jt2P/Copy-of-icon.png" alt="Custom Logo">
     <div class="overlay">
-        <div class="container data-box"> <!-- Apply the data-box class here -->
+        <div class="container data-box">
             <h1>Monitoraggio Impianto</h1>
             <h1>Fotovoltaico</h1>
 	    <hr>
             <div class="subheading">
                 <h1>IVECO BRESCIA</h1>
-                <h1 id="totalPowerValue"> <!-- Value from script will be inserted here --> kW</h1>
+                <h1 id="totalPowerValue">kWp</h1>
             </div>
             <h3 class="smaller-text">Brescia</h3>
         </div>
