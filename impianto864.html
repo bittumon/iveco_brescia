@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XML Data Extraction and Display</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url("https://i.postimg.cc/pTZzSjwK/AQWXzg.gif");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center top; /* Adjusted background position */
+            background-attachment: fixed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden; /* Disable scroll bars */
+        }
+
+        .overlay {
+            background-color: rgba(52, 58, 64, 0); /* Transparent background */
+            padding-top: 20px;
+            padding-bottom: 20px;
+            max-width: 600px;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .container {
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            font-family: "Open Sans", sans-serif;
+            color: #fff;
+            box-sizing: border-box;
+            padding: 0!important;
+        }
+
+        .container h1 {
+            margin: 0;
+            padding: 0;
+            line-height: 1.5;
+            font-size: 2rem;
+            text-align: center; /* Center-align the text */
+        }
+
+        .subheading {
+            margin-top: 0.2em;
+            text-indent: 2em;
+            font-size: 1.5rem;
+            text-align: center; /* Center-align the text */
+        }
+
+        .smaller-text {
+            font-size: 0.8rem;
+        }
+
+        hr {
+            max-width: 500px;
+            margin: 0 auto 10px;
+            width: 500%; /* Make the HR line 5 times longer */
+        }
+
+        /* Added style for the data box */
+        .data-box {
+         background-color: rgba(52, 58, 64, 0.2); /* Semi-transparent background color */
+         border: none; /* Remove border */
+         padding: 0; /* Remove padding */
+         box-shadow: none; /* Remove box shadow */
+         overflow: hidden; /* Hide any overflowing content */
+         text-align: center; /* Center-align content in the data box */
+         }
+
+        /* Added style for logos */
+        .logo-left {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+
+        .logo-right {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            width: 200px; /* Set the width of the second logo to be three times bigger */
+            height: auto; /* Maintain aspect ratio */
+        }
+    </style>
+</head>
+<body>
+    <img class="logo-left" src="https://www.iveco.com/italy/-/media/ScIVG/shared/Logo/Iveco---Drive-the-road-of-change.svg?iar=0&rev=-1" alt="Iveco Logo">
+    <img class="logo-right" src="https://i.postimg.cc/yd33jt2P/Copy-of-icon.png" alt="Custom Logo">
+    <div class="overlay">
+        <div class="container data-box"> <!-- Apply the data-box class here -->
+            <h1>Monitoraggio Impianto</h1>
+            <h1>Fotovoltaico</h1>
+	    <hr>
+            <div class="subheading">
+                <h1>IVECO BRESCIA</h1>
+                <h1 id="totalPowerValue"> <!-- Value from script will be inserted here --> kW</h1>
+            </div>
+            <h3 class="smaller-text">Brescia</h3>
+        </div>
+    </div>
+
+    <script>
+        function fetchData() {
+            fetch("https://cors-anywhere.herokuapp.com/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
+            .then(response => response.text())
+            .then(data => {
+                const parser = new DOMParser();
+                const xmlDoc = parser.parseFromString(data, "text/xml");
+                const righe = xmlDoc.querySelectorAll("riga");
+                let sum = 0;
+
+                righe.forEach(riga => {
+                    const denominazione_widget = riga.querySelector("denominazione_widget");
+                    const valore = riga.querySelector("valore");
+
+                    if (denominazione_widget && denominazione_widget.textContent === "Potenza istantanea") {
+                        const value = parseFloat(valore.textContent);
+                        if (!isNaN(value)) {
+                            sum += value;
+                        }
+                    }
+                });
+
+                const totalPower = sum.toFixed(2);
+                const multipliedValue = (sum * 4.5).toFixed(2);
+                const totalPowerElement = document.getElementById("totalPowerValue");
+                totalPowerElement.textContent = totalPower + " kWp";
+
+                const multipliedValueElement = document.getElementById("multipliedValue");
+                multipliedValueElement.textContent = multipliedValue;
+            })
+            .catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        }
+
+        fetchData();
+        setInterval(fetchData, 3000);
+    </script>
+</body>
+</html>
