@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XML Data Extraction and Display</title>
+    <title>XML Data Slideshow</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background-image: url("https://i.postimg.cc/pTZzSjwK/AQWXzg.gif");
+            background-image: url("https://images2.imgbox.com/a5/ed/Tqx9nPht_o.jpg");
             background-size: cover;
             background-repeat: no-repeat;
             background-position: center top;
@@ -59,19 +59,24 @@
         }
 
         hr {
-            max-width: 500px;
+            max-width: 250px;
             margin: 0 auto 10px;
             width: 200%;
         }
 
         .data-box {
-            background-color: rgba(52, 58, 64, 0.5);
+            background-color: rgba(52, 58, 64, 0.4);
             border: none;
             padding: 0;
             box-shadow: none;
             overflow: hidden;
             text-align: center;
             margin: 10px;
+        }
+
+        /* Add styles for the second data box */
+        .fixed-value {
+            display: none; /* Hide the fixed-value data box initially */
         }
 
         .logo-left {
@@ -92,58 +97,88 @@
     </style>
 </head>
 <body>
-    <img class="logo-left" src="https://www.iveco.com/italy/-/media/ScIVG/shared/Logo/Iveco---Drive-the-road-of-change.svg?iar=0&rev=-1" alt="Iveco Logo">
-    <img class="logo-right" src="https://i.postimg.cc/yd33jt2P/Copy-of-icon.png" alt="Custom Logo">
     <div class="overlay">
-        <div class="container data-box">
-            <h1>Monitoraggio Impianto</h1>
-            <h1>Fotovoltaico</h1>
+        <div class="container data-box" id="dataBox1">
+            <h1>Impianto Fotovoltaico&nbsp;</h1>
+            <h1>IVECO BRESCIA</h1>
+	    <hr>
+            <div class="subheading">
+                <h1>Potenza Attuale&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+                <h1 id="totalPowerValue">kW&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+            </div>
+            <h3 class="smaller-text">Brescia</h3>
+        </div>
+
+        <!-- Second data box with fixed value -->
+        <div class="container data-box fixed-value" id="dataBox2">
+            <h1>Impianto Fotovoltaico</h1>
+            <h1>IVECO BRESCIA</h1>
             <hr>
             <div class="subheading">
-                <h1>IVECO BRESCIA</h1>
-                <h1 id="totalPowerValue">kW</h1>
+                <h1>Potenza Nominale&nbsp;&nbsp;&nbsp;&nbsp;</h1>
+                <h1>4.430 kWp&nbsp;&nbsp;&nbsp;&nbsp;</h1> <!-- Fixed value -->
             </div>
             <h3 class="smaller-text">Brescia</h3>
         </div>
     </div>
 
     <script>
-        function fetchData() {
-            fetch("https://cors-anywhere.herokuapp.com/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
-            .then(response => response.text())
-            .then(data => {
-                const parser = new DOMParser();
-                const xmlDoc = parser.parseFromString(data, "text/xml");
-                const righe = xmlDoc.querySelectorAll("riga");
-                let sum = 0;
+        // Function to toggle between the two data boxes
+        function toggleDataBoxes() {
+            const dataBox1 = document.getElementById('dataBox1');
+            const dataBox2 = document.getElementById('dataBox2');
 
-                righe.forEach(riga => {
-                    const denominazione_widget = riga.querySelector("denominazione_widget");
-                    const valore = riga.querySelector("valore");
-
-                    if (denominazione_widget && denominazione_widget.textContent === "Potenza istantanea") {
-                        const value = parseFloat(valore.textContent);
-                        if (!isNaN(value)) {
-                            sum += value;
-                        }
-                    }
-                });
-
-                const totalPower = sum.toFixed(2);
-                const multipliedValue = (sum * 4.5).toFixed(2);
-                const totalPowerElement = document.getElementById("totalPowerValue");
-                totalPowerElement.textContent = totalPower + " kW";
-
-                const multipliedValueElement = document.getElementById("multipliedValue");
-                multipliedValueElement.textContent = multipliedValue;
-            })
-            .catch(error => {
-                console.error("Error fetching data:", error);
-            });
+            // Toggle the visibility of the data boxes
+            dataBox1.style.display = dataBox1.style.display === 'none' ? 'block' : 'none';
+            dataBox2.style.display = dataBox2.style.display === 'none' ? 'block' : 'none';
         }
 
+        // Initial setup to hide the second data box
+        document.getElementById('dataBox2').style.display = 'none';
+
+        // Function to fetch and display data from XML
+        function fetchData() {
+            fetch("https://cors-anywhere.herokuapp.com/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
+                .then(response => response.text())
+                .then(data => {
+                    const parser = new DOMParser();
+                    const xmlDoc = parser.parseFromString(data, "text/xml");
+                    const righe = xmlDoc.querySelectorAll("riga");
+                    let sum = 0;
+
+                    righe.forEach(riga => {
+                        const denominazione_widget = riga.querySelector("denominazione_widget");
+                        const valore = riga.querySelector("valore");
+
+                        if (denominazione_widget && denominazione_widget.textContent === "Potenza istantanea") {
+                            const value = parseFloat(valore.textContent);
+                            if (!isNaN(value)) {
+                                sum += value;
+                            }
+                        }
+                    });
+
+                    const totalPower = sum.toFixed(2);
+                    const multipliedValue = (sum * 4.5).toFixed(2);
+                    const totalPowerElement = document.getElementById("totalPowerValue");
+                    totalPowerElement.textContent = multipliedValue + " kW";
+
+                    const multipliedValueElement = document.getElementById("multipliedValue");
+                    multipliedValueElement.textContent = multipliedValue;
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                });
+        }
+
+        // Set an interval to toggle between the two data boxes and fetch data
+        setInterval(() => {
+            toggleDataBoxes();
+            fetchData();
+        }, 5000);
+
+        // Initial data fetch
         fetchData();
-        setInterval(fetchData, 3000);
     </script>
 </body>
 </html>
