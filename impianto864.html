@@ -138,7 +138,7 @@
 
         // Function to fetch and display data from XML
         function fetchData() {
-            fetch("https://cors-anywhere.herokuapp.com/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
+            fetch("https://thingproxy.freeboard.io/fetch/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
                 .then(response => response.text())
                 .then(data => {
                     const parser = new DOMParser();
