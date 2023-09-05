@@ -138,33 +138,28 @@
 
         // Function to fetch and display data from XML
         function fetchData() {
-            fetch("https://cors-anywhere.herokuapp.com/http://www.proxime.it:8080/gdxml.php?CODICE=1744")
-                .then(response => response.text())
+            fetch("https://api.allorigins.win/get?url=http://www.proxime.it:8080/gdxml.php?CODICE=1744")
+                .then(response => response.json())
                 .then(data => {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(data, "text/xml");
+                    const xmlDoc = new DOMParser().parseFromString(data.contents, "text/xml");
                     const righe = xmlDoc.querySelectorAll("riga");
+
                     let sum = 0;
 
+                    // Iterate through righe to extract and calculate values
                     righe.forEach(riga => {
-                        const denominazione_widget = riga.querySelector("denominazione_widget");
-                        const valore = riga.querySelector("valore");
+                        const denominazione = riga.querySelector("denominazione")?.textContent || "";
+                        const valore = parseFloat(riga.querySelector("valore")?.textContent) || 0;
+                        const unita_misura = riga.querySelector("unita_misura")?.textContent || "";
 
-                        if (denominazione_widget && denominazione_widget.textContent === "Potenza istantanea") {
-                            const value = parseFloat(valore.textContent);
-                            if (!isNaN(value)) {
-                                sum += value;
-                            }
+                        if (denominazione.includes("Potenza attiva") && unita_misura === "kW") {
+                            sum += valore;
                         }
                     });
 
-                    const totalPower = sum.toFixed(2);
                     const multipliedValue = (sum * 4.5).toFixed(2);
                     const totalPowerElement = document.getElementById("totalPowerValue");
                     totalPowerElement.textContent = multipliedValue + " kW";
-
-                    const multipliedValueElement = document.getElementById("multipliedValue");
-                    multipliedValueElement.textContent = multipliedValue;
                 })
                 .catch(error => {
                     console.error("Error fetching data:", error);
